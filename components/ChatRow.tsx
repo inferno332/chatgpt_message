@@ -9,7 +9,6 @@ import { collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 type Props = {
-  key: string;
   id: string;
 };
 
@@ -20,7 +19,7 @@ function ChatRow({ id }: Props) {
   const [active, setActive] = useState(false);
 
   const [messages] = useCollection(
-    collection(db, "users", session?.user?.email!, "chats", id, "messeges")
+    collection(db, "users", session?.user?.email!, "chats", id, "messages")
   );
 
   useEffect(() => {
@@ -41,7 +40,8 @@ function ChatRow({ id }: Props) {
     >
       <ChatBubbleLeftIcon className="h-5 w-5" />
       <p className="flex-1 hidden md:inline-flex truncate">
-        {messages?.docs[messages.docs.length - 1]?.data().text || "New Chat"}
+        {console.log(messages?.docs[messages.docs.length - 1]?.data().text)}
+        {messages?.docs[messages?.docs.length - 1]?.data().text || "New Chat"}
       </p>
       <TrashIcon
         onClick={removeChat}
