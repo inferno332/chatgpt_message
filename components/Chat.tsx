@@ -4,6 +4,7 @@ import { db } from "@/firebase";
 import { ArrowDownCircleIcon } from "@heroicons/react/24/outline";
 import { collection, orderBy, query } from "firebase/firestore";
 import { useSession } from "next-auth/react";
+import { useEffect, useRef } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Message from "./Message";
 
@@ -28,9 +29,20 @@ function Chat({ chatId }: Props) {
         orderBy("createdAt", "asc")
       )
   );
+  // scroll to bottom of chat when new message is added
+  const chatRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (chatRef && chatRef.current) {
+      chatRef.current.scroll({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth",
+        left: 0,
+      });
+    }
+  }, [messages, chatRef]);
 
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden">
+    <div ref={chatRef} className="flex-1 overflow-y-auto overflow-x-hidden">
       {messages?.empty && (
         <>
           <p className="mt-10 text-center text-white">

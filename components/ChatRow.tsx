@@ -40,7 +40,6 @@ function ChatRow({ id }: Props) {
     >
       <ChatBubbleLeftIcon className="h-5 w-5" />
       <p className="flex-1 hidden md:inline-flex truncate">
-        {console.log(messages?.docs[messages.docs.length - 1]?.data().text)}
         {messages?.docs[messages?.docs.length - 1]?.data().text || "New Chat"}
       </p>
       <TrashIcon
