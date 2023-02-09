@@ -4,15 +4,17 @@
 import { collection, orderBy, query } from "firebase/firestore";
 import { signOut, useSession } from "next-auth/react";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 import { db } from "@/firebase";
 import NewChat from "./NewChat";
 import ChatRow from "./ChatRow";
+import ModelSelection from "./ModelSelection";
 
 function SideBar() {
   const { data: session } = useSession();
 
-  const [chats] = useCollection(
+  const [chats, loading] = useCollection(
     session &&
       query(
         collection(db, "users", session?.user?.email!, "chats"),
@@ -25,21 +27,31 @@ function SideBar() {
         <div>
           {/* NewChat */}
           <NewChat />
-          <div>{/* Model Selection */}</div>
+          <div className="hidden md:inline">
+            <ModelSelection />
+          </div>
 
-          {/* Map through the ChatRows */}
-          {chats?.docs.map((chat) => (
-            <ChatRow key={chat.id} id={chat.id} />
-          ))}
+          <div className="flex flex-col space-y-2 my-2">
+            {loading && (
+              <p className="animate-pulse text-center text-white">
+                Loading chats...
+              </p>
+            )}
+            {chats?.docs.map((chat) => (
+              <ChatRow key={chat.id} id={chat.id} />
+            ))}
+          </div>
         </div>
       </div>
       {session && (
-        <img
-          onClick={() => signOut()}
-          src={session.user?.image!}
-          alt=""
-          className="h-12 w-12 rounded-full cursor-pointer mx-auto mb-2 hover:opacity-50"
-        />
+        <div className="flex flex-col cursor-pointer hover:opacity-50" onClick={() => signOut()}>
+          <img
+            src={session.user?.image!}
+            alt=""
+            className="h-10 w-10 rounded-full mx-auto mb-2"
+          />
+          <ArrowRightOnRectangleIcon className="h-5 w-5 text-white mx-auto" />
+        </div>
       )}
     </div>
   );
